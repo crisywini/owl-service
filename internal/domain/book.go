@@ -57,6 +57,11 @@ func (b *BookBuilder) WithGenre(genre []string) *BookBuilder {
 	return b
 }
 
+func (b *BookBuilder) WithPublishedYear(year int) *BookBuilder {
+	b.book.PublishedYear = year
+	return b
+}
+
 func (b *BookBuilder) Build() Book {
 	return b.book
 }
