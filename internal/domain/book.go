@@ -1,15 +1,17 @@
 package domain
 
+import "go.mongodb.org/mongo-driver/v2/bson"
+
 type Book struct {
-	ID            string
-	Title         string
-	Authors       []string
-	Publisher     string
-	PublishedYear int
-	ISBN10        string
-	ISBN13        string
-	Description   string
-	Genre         []string
+	ID            bson.ObjectID `bson:"_id,omitempty" json:"id"`
+	Title         string        `bson:"title" json:"title"`
+	Authors       []string      `bson:"authors" json:"authors"`
+	Publisher     string        `bson:"publisher" json:"publisher"`
+	PublishedYear int           `bson:"published_year" json:"published_year"`
+	ISBN10        string        `bson:"isbn10" json:"isbn10"`
+	ISBN13        string        `bson:"isbn13" json:"isbn13"`
+	Description   string        `bson:"description" json:"description"`
+	Genre         []string      `bson:"genre" json:"genre"`
 }
 
 type BookBuilder struct {

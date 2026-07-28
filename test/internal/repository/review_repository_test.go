@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/crisywini/owl-service/internal/model"
+	"github.com/crisywini/owl-service/internal/domain"
 	"github.com/crisywini/owl-service/internal/repository"
 	"github.com/testcontainers/testcontainers-go/modules/mongodb"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -54,7 +54,7 @@ func TestReviewRepository_SaveAndRetrieve(t *testing.T) {
 	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	finish := time.Date(2024, 1, 15, 0, 0, 0, 0, time.UTC)
 
-	review := model.NewReviewBuilder(bookID).
+	review := domain.NewReviewBuilder(bookID).
 		WithRate(5).
 		WithDescription("An absolute masterpiece.").
 		WithStartDate(start).
@@ -89,10 +89,10 @@ func TestReviewRepository_FindAll(t *testing.T) {
 	defer cleanup()
 
 	bookID := bson.NewObjectID()
-	seeds := []model.Review{
-		model.NewReviewBuilder(bookID).WithRate(5).WithDescription("Loved it!").Build(),
-		model.NewReviewBuilder(bookID).WithRate(4).WithDescription("Very good.").Build(),
-		model.NewReviewBuilder(bson.NewObjectID()).WithRate(3).WithDescription("It was okay.").Build(),
+	seeds := []domain.Review{
+		domain.NewReviewBuilder(bookID).WithRate(5).WithDescription("Loved it!").Build(),
+		domain.NewReviewBuilder(bookID).WithRate(4).WithDescription("Very good.").Build(),
+		domain.NewReviewBuilder(bson.NewObjectID()).WithRate(3).WithDescription("It was okay.").Build(),
 	}
 
 	for i := range seeds {
@@ -126,7 +126,7 @@ func TestReviewRepository_FindByID(t *testing.T) {
 	defer cleanup()
 
 	bookID := bson.NewObjectID()
-	review := model.NewReviewBuilder(bookID).
+	review := domain.NewReviewBuilder(bookID).
 		WithRate(4).
 		WithDescription("Really enjoyed this one.").
 		AddFavoritePhrase("It was the best of times.").
@@ -178,10 +178,10 @@ func TestReviewRepository_FindByBookID(t *testing.T) {
 	bookA := bson.NewObjectID()
 	bookB := bson.NewObjectID()
 
-	reviews := []model.Review{
-		model.NewReviewBuilder(bookA).WithRate(5).WithDescription("Great book A!").Build(),
-		model.NewReviewBuilder(bookA).WithRate(4).WithDescription("Really liked book A.").Build(),
-		model.NewReviewBuilder(bookB).WithRate(3).WithDescription("Book B was average.").Build(),
+	reviews := []domain.Review{
+		domain.NewReviewBuilder(bookA).WithRate(5).WithDescription("Great book A!").Build(),
+		domain.NewReviewBuilder(bookA).WithRate(4).WithDescription("Really liked book A.").Build(),
+		domain.NewReviewBuilder(bookB).WithRate(3).WithDescription("Book B was average.").Build(),
 	}
 
 	for i := range reviews {
@@ -228,7 +228,7 @@ func TestReviewRepository_Update(t *testing.T) {
 	defer cleanup()
 
 	bookID := bson.NewObjectID()
-	review := model.NewReviewBuilder(bookID).
+	review := domain.NewReviewBuilder(bookID).
 		WithRate(3).
 		WithDescription("It was okay.").
 		Build()
@@ -239,7 +239,7 @@ func TestReviewRepository_Update(t *testing.T) {
 	}
 
 	t.Run("updates fields and persists", func(t *testing.T) {
-		updated := model.NewReviewBuilder(bookID).
+		updated := domain.NewReviewBuilder(bookID).
 			WithRate(5).
 			WithDescription("Changed my mind, it was amazing!").
 			AddFavoritePhrase("A memorable quote.").
@@ -268,14 +268,14 @@ func TestReviewRepository_Update(t *testing.T) {
 	})
 
 	t.Run("unknown id returns no error", func(t *testing.T) {
-		patch := model.NewReviewBuilder(bookID).WithRate(1).Build()
+		patch := domain.NewReviewBuilder(bookID).WithRate(1).WithDescription("patch").Build()
 		if err := repo.Update("000000000000000000000000", &patch); err != nil {
 			t.Errorf("Update() unexpected error for unknown ID: %v", err)
 		}
 	})
 
 	t.Run("invalid id returns error", func(t *testing.T) {
-		patch := model.NewReviewBuilder(bookID).WithRate(1).Build()
+		patch := domain.NewReviewBuilder(bookID).WithRate(1).WithDescription("patch").Build()
 		if err := repo.Update("not-a-valid-id", &patch); err == nil {
 			t.Fatal("Update() expected error for invalid ID, got nil")
 		}
@@ -287,7 +287,7 @@ func TestReviewRepository_Delete(t *testing.T) {
 	defer cleanup()
 
 	bookID := bson.NewObjectID()
-	review := model.NewReviewBuilder(bookID).
+	review := domain.NewReviewBuilder(bookID).
 		WithRate(4).
 		WithDescription("A solid read.").
 		Build()
