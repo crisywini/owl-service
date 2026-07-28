@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/crisywini/owl-service/internal/model"
+	"github.com/crisywini/owl-service/internal/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -19,7 +19,7 @@ func NewReviewRepository(db *mongo.Database) *ReviewRepository {
 	}
 }
 
-func (r *ReviewRepository) Save(review *model.Review) (*model.Review, error) {
+func (r *ReviewRepository) Save(review *domain.Review) (*domain.Review, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -32,7 +32,7 @@ func (r *ReviewRepository) Save(review *model.Review) (*model.Review, error) {
 	return review, nil
 }
 
-func (r *ReviewRepository) FindAll() ([]model.Review, error) {
+func (r *ReviewRepository) FindAll() ([]domain.Review, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -42,14 +42,14 @@ func (r *ReviewRepository) FindAll() ([]model.Review, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var reviews []model.Review
+	var reviews []domain.Review
 	if err := cursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
 	return reviews, nil
 }
 
-func (r *ReviewRepository) FindByID(id string) (*model.Review, error) {
+func (r *ReviewRepository) FindByID(id string) (*domain.Review, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -58,7 +58,7 @@ func (r *ReviewRepository) FindByID(id string) (*model.Review, error) {
 		return nil, err
 	}
 
-	var review model.Review
+	var review domain.Review
 	err = r.collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&review)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (r *ReviewRepository) FindByID(id string) (*model.Review, error) {
 	return &review, nil
 }
 
-func (r *ReviewRepository) FindByBookID(bookID string) ([]model.Review, error) {
+func (r *ReviewRepository) FindByBookID(bookID string) ([]domain.Review, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -81,14 +81,14 @@ func (r *ReviewRepository) FindByBookID(bookID string) ([]model.Review, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var reviews []model.Review
+	var reviews []domain.Review
 	if err := cursor.All(ctx, &reviews); err != nil {
 		return nil, err
 	}
 	return reviews, nil
 }
 
-func (r *ReviewRepository) Update(id string, updated *model.Review) error {
+func (r *ReviewRepository) Update(id string, updated *domain.Review) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

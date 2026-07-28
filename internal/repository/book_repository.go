@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/crisywini/owl-service/internal/model"
+	"github.com/crisywini/owl-service/internal/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -19,7 +19,7 @@ func NewBookRepository(db *mongo.Database) *BookRepository {
 	}
 }
 
-func (r *BookRepository) Save(book *model.Book) (*model.Book, error) {
+func (r *BookRepository) Save(book *domain.Book) (*domain.Book, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -32,7 +32,7 @@ func (r *BookRepository) Save(book *model.Book) (*model.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepository) FindAll() ([]model.Book, error) {
+func (r *BookRepository) FindAll() ([]domain.Book, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -42,14 +42,14 @@ func (r *BookRepository) FindAll() ([]model.Book, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var books []model.Book
+	var books []domain.Book
 	if err := cursor.All(ctx, &books); err != nil {
 		return nil, err
 	}
 	return books, nil
 }
 
-func (r *BookRepository) FindByID(id string) (*model.Book, error) {
+func (r *BookRepository) FindByID(id string) (*domain.Book, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -58,7 +58,7 @@ func (r *BookRepository) FindByID(id string) (*model.Book, error) {
 		return nil, err
 	}
 
-	var book model.Book
+	var book domain.Book
 	err = r.collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&book)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (r *BookRepository) FindByID(id string) (*model.Book, error) {
 	return &book, nil
 }
 
-func (r *BookRepository) Update(id string, updated *model.Book) error {
+func (r *BookRepository) Update(id string, updated *domain.Book) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
