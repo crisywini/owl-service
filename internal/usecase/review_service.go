@@ -16,6 +16,16 @@ var (
 	ErrPhrasesRequired           = errors.New("at least one phrase is required")
 )
 
+type ReviewServicePort interface {
+	Create(review *domain.Review) (*domain.Review, error)
+	GetByID(id string) (*domain.Review, error)
+	GetByBookID(bookID string) ([]domain.Review, error)
+	GetAll() ([]domain.Review, error)
+	Update(id string, updates *domain.Review) (*domain.Review, error)
+	AddPhrases(id string, phrases []string) (*domain.Review, error)
+	DeleteByID(id string) error
+}
+
 // ReviewRepository defines the persistence contract required by ReviewService.
 // The concrete repository.ReviewRepository satisfies this interface directly.
 type ReviewRepository interface {
