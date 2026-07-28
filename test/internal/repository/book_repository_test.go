@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/crisywini/owl-service/internal/model"
+	"github.com/crisywini/owl-service/internal/domain"
 	"github.com/crisywini/owl-service/internal/repository"
 	"github.com/testcontainers/testcontainers-go/modules/mongodb"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -49,7 +49,7 @@ func TestBookRepository_SaveAndRetrieve(t *testing.T) {
 	repo, cleanup := setupBookRepo(t)
 	defer cleanup()
 
-	book := model.NewBookBuilder().
+	book := domain.NewBookBuilder().
 		WithTitle("Giovanni's Room").
 		WithAuthors([]string{"James Baldwin"}).
 		WithPublisher("The Dial Press").
@@ -86,10 +86,10 @@ func TestBookRepository_FindAll(t *testing.T) {
 	repo, cleanup := setupBookRepo(t)
 	defer cleanup()
 
-	seeds := []model.Book{
-		model.NewBookBuilder().WithTitle("Giovanni's Room").WithAuthors([]string{"James Baldwin"}).Build(),
-		model.NewBookBuilder().WithTitle("1984").WithAuthors([]string{"George Orwell"}).Build(),
-		model.NewBookBuilder().WithTitle("Dune").WithAuthors([]string{"Frank Herbert"}).Build(),
+	seeds := []domain.Book{
+		domain.NewBookBuilder().WithTitle("Giovanni's Room").WithAuthors([]string{"James Baldwin"}).Build(),
+		domain.NewBookBuilder().WithTitle("1984").WithAuthors([]string{"George Orwell"}).Build(),
+		domain.NewBookBuilder().WithTitle("Dune").WithAuthors([]string{"Frank Herbert"}).Build(),
 	}
 
 	for i := range seeds {
@@ -122,7 +122,7 @@ func TestBookRepository_FindByID(t *testing.T) {
 	repo, cleanup := setupBookRepo(t)
 	defer cleanup()
 
-	book := model.NewBookBuilder().
+	book := domain.NewBookBuilder().
 		WithTitle("Dune").
 		WithAuthors([]string{"Frank Herbert"}).
 		WithPublisher("Chilton Books").
@@ -169,7 +169,7 @@ func TestBookRepository_Update(t *testing.T) {
 	repo, cleanup := setupBookRepo(t)
 	defer cleanup()
 
-	book := model.NewBookBuilder().
+	book := domain.NewBookBuilder().
 		WithTitle("Dune").
 		WithAuthors([]string{"Frank Herbert"}).
 		WithPublisher("Chilton Books").
@@ -182,7 +182,7 @@ func TestBookRepository_Update(t *testing.T) {
 	}
 
 	t.Run("updates fields and persists", func(t *testing.T) {
-		updated := model.NewBookBuilder().
+		updated := domain.NewBookBuilder().
 			WithTitle("Dune Messiah").
 			WithAuthors([]string{"Frank Herbert"}).
 			WithPublisher("Putnam").
@@ -213,14 +213,14 @@ func TestBookRepository_Update(t *testing.T) {
 	})
 
 	t.Run("unknown id returns no error", func(t *testing.T) {
-		patch := model.NewBookBuilder().WithTitle("Ghost Book").Build()
+		patch := domain.NewBookBuilder().WithTitle("Ghost Book").Build()
 		if err := repo.Update("000000000000000000000000", &patch); err != nil {
 			t.Errorf("Update() unexpected error for unknown ID: %v", err)
 		}
 	})
 
 	t.Run("invalid id returns error", func(t *testing.T) {
-		patch := model.NewBookBuilder().WithTitle("Ghost Book").Build()
+		patch := domain.NewBookBuilder().WithTitle("Ghost Book").Build()
 		if err := repo.Update("not-a-valid-id", &patch); err == nil {
 			t.Fatal("Update() expected error for invalid ID, got nil")
 		}
@@ -231,7 +231,7 @@ func TestBookRepository_Delete(t *testing.T) {
 	repo, cleanup := setupBookRepo(t)
 	defer cleanup()
 
-	book := model.NewBookBuilder().
+	book := domain.NewBookBuilder().
 		WithTitle("1984").
 		WithAuthors([]string{"George Orwell"}).
 		WithPublishedYear(1949).
