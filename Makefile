@@ -1,6 +1,6 @@
 
 
 
-testDomain: 
+runTest:
 	echo "Running tests 🧪"
-	go test ./test/internal/domain/... -v
+	go test ./test/... -v
