@@ -15,8 +15,15 @@ var (
 	ErrBookNotFound            = errors.New("book not found")
 )
 
-// BookRepository defines the persistence contract required by BookService.
-// The concrete repository.BookRepository satisfies this interface directly.
+// BookServicePort is the contract that consumers (e.g. HTTP handlers) depend on.
+type BookServicePort interface {
+	Create(book *domain.Book) (*domain.Book, error)
+	GetByID(id string) (*domain.Book, error)
+	GetAll() ([]domain.Book, error)
+	Update(id string, updates *domain.Book) (*domain.Book, error)
+	DeleteByID(id string) error
+}
+
 type BookRepository interface {
 	Save(book *domain.Book) (*domain.Book, error)
 	FindAll() ([]domain.Book, error)
