@@ -72,5 +72,9 @@ func main() {
 	r.PUT("/reviews/:id", reviewHandler.PutReview)
 	r.DELETE("/reviews/:id", reviewHandler.DeleteReview)
 
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
 	r.Run(":8080")
 }
