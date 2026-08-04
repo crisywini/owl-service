@@ -12,6 +12,8 @@ type Book struct {
 	ISBN13        string        `bson:"isbn13" json:"isbn13"`
 	Description   string        `bson:"description" json:"description"`
 	Genre         []string      `bson:"genre" json:"genre"`
+	CoverImage    string        `bson:"cover_image" json:"cover_image"`
+	SpineColor    string        `bson:"spine_color" json:"spine_color"`
 }
 
 type BookBuilder struct {
@@ -61,6 +63,16 @@ func (b *BookBuilder) WithGenre(genre []string) *BookBuilder {
 
 func (b *BookBuilder) WithPublishedYear(year int) *BookBuilder {
 	b.book.PublishedYear = year
+	return b
+}
+
+func (b *BookBuilder) WithCoverImage(coverImage string) *BookBuilder {
+	b.book.CoverImage = coverImage
+	return b
+}
+
+func (b *BookBuilder) WithSpineColor(spineColor string) *BookBuilder {
+	b.book.SpineColor = spineColor
 	return b
 }
 
