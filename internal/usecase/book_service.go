@@ -44,7 +44,8 @@ func NewBookService(repo BookRepository) *BookService {
 
 // Create validates and persists a new book.
 // Both Title and at least one non-empty Author are mandatory.
-// Genre, Publisher, PublishedYear, ISBN10, ISBN13 and Description are optional.
+// Genre, Publisher, PublishedYear, ISBN10, ISBN13, Description, CoverImage
+// and SpineColor are optional.
 func (s *BookService) Create(book *domain.Book) (*domain.Book, error) {
 	if err := s.validateBook(book); err != nil {
 		return nil, err
@@ -86,8 +87,8 @@ func (s *BookService) GetAll() ([]domain.Book, error) {
 //   - Authors are immutable: if the caller supplies authors that differ from the
 //     stored ones, ErrAuthorsCannotBeModified is returned.
 //   - When no authors are supplied in updates, the stored authors are kept.
-//   - Genre, Publisher, PublishedYear, ISBN10, ISBN13 and Description may be
-//     freely changed or cleared.
+//   - Genre, Publisher, PublishedYear, ISBN10, ISBN13, Description, CoverImage
+//     and SpineColor may be freely changed or cleared.
 func (s *BookService) Update(id string, updates *domain.Book) (*domain.Book, error) {
 	existing, err := s.repo.FindByID(id)
 	if err != nil {
@@ -111,6 +112,8 @@ func (s *BookService) Update(id string, updates *domain.Book) (*domain.Book, err
 		WithISBN13(updates.ISBN13).
 		WithDescription(updates.Description).
 		WithGenre(updates.Genre).
+		WithCoverImage(updates.CoverImage).
+		WithSpineColor(updates.SpineColor).
 		Build()
 
 	if err := s.repo.Update(id, &merged); err != nil {

@@ -86,6 +86,8 @@ func (r *BookRepository) Update(id string, updated *domain.Book) error {
 			"isbn13":         updated.ISBN13,
 			"description":    updated.Description,
 			"genre":          updated.Genre,
+			"cover_image":    updated.CoverImage,
+			"spine_color":    updated.SpineColor,
 		},
 	}
 
